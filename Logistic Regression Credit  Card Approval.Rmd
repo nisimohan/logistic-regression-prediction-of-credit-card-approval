@@ -1,0 +1,491 @@
+---
+title: "DSCI300 Mini Project 7"
+author: "Nisi Mohan Kuniyil 300321388"
+date: "05/12/2020"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE)
+```
+
+```{r, echo=FALSE, cache=FALSE}
+library(stringr)
+library(fastDummies)
+library(GGally)
+library(e1071)
+#library(gapminder)
+library(ggplot2)
+library(graphics)
+#library(magrittr)
+library(dplyr)
+library(caret)
+#library(plyr)
+
+#library(purrr)
+#library(tidyverse)
+
+```
+
+
+# Problem Statement
+
+**Logistic Regression analysis and prediction of credit card approvals** 
+
+Companies have to go through a series of processes to approve a credit card to a person. This process is tedious and mundane. Every time an application is submitted bank has to analyze certain factors that play a vital role in the approval of the credit card, such as the income of the applicant, credit score, employment status, etc. This can be automated using Logistic regression analysis which can be used to understand the factors which have the most effect on the decision-making process of credit card approval. In order to achieve this, a logistic regression model can be trained to predict the probability of credit card approval based on the features from the data set. afterward, the trained logistic regression model can be analyzed to get insights into different features that have the highest impact on the approval rate.
+
+
+# Solution
+
+
+## Exploratory Data Analysis
+
+We start off by understanding the type of data in the dataframe. We can see from the below summary that there are 15 variables associated with credit card approval or denial. The outcome values of the last column _approved_ are the following symbols, "+" means approved and "-" means denied. These symbols are not meaningful, so we will be transforming that to 1's and 0's for the regression analysis.
+
+
+
+```{r,echo=FALSE}
+
+creditcard_df <- read.csv("crx.csv")
+creditCard_df <- rename_(creditcard_df, "Male" = "b", "Age" ="X30.83", "Debt"= "X0", "Married"="u", "BankCustomer"= "g", "EducationLevel"= "w", "Ethnicity"= "v", "YearsEmployed"= "X1.25","PriorDefault"= "t", "Employed"= "t.1
+", "CreditScore"= "X01", "DriversLicense"= "f", "Citizen"= "g.1
+", "ZipCode"="X00202", "Income" = "X0.1", "Approved"= "X.")
+
+
+```
+
+```{r,echo=FALSE}
+str(creditCard_df)
+```
+There are five continuous variables in the dataset. We will check the relationship between these variables and credit card approval before jumping to regression analysis. Box plot is used here to understand the correlation between _Age_, _Income_, _Debt_, _CreditScore_, _YearsEmployed_, and the approval rate. The below box plots of these continuous variables show that the means of the features of the approved applications are further distributed from the mean of the denied.
+
+
+
+
+```{r, echo=FALSE}
+creditCard_df$Approved <- as.integer(factor(creditCard_df$Approved))-1
+creditCard_df$Age <- as.integer(creditCard_df$Age)
+creditCard_df<-  na.omit(creditCard_df)
+
+```
+
+```{r,echo=FALSE}
+
+
+boxplot(creditCard_df$Age[creditCard_df$Approved==0],
+        creditCard_df$Age[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Age and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Age"
+        )
+
+
+```
+
+
+
+
+
+```{r,echo=FALSE}
+
+boxplot(creditCard_df$Debt[creditCard_df$Approved==0],
+        creditCard_df$Debt[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Debt and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Debt"
+        )
+
+
+```
+
+
+
+```{r,echo=FALSE}
+
+boxplot(creditCard_df$Income[creditCard_df$Approved==0],
+        creditCard_df$Income[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Income and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Income"
+        )
+
+
+```
+
+
+
+```{r,echo=FALSE}
+
+boxplot(creditCard_df$CreditScore[creditCard_df$Approved==0],
+        creditCard_df$CreditScore[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between CreditScore and Credit Card approval",
+        xlab = "Approval",
+        ylab = "CreditScore"
+        )
+
+
+```
+
+
+
+
+```{r, echo=FALSE}
+
+boxplot(creditCard_df$YearsEmployed[creditCard_df$Approved==0],
+        creditCard_df$YearsEmployed[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between YearsEmployed and Credit Card approval",
+        xlab = "Approval",
+        ylab = "YearsEmployed"
+        )
+
+
+```
+
+
+
+# Modeling
+
+The next step is to perform logistic regression on the five variables identified from the dataset. The Akaike Information Criterion(AIC) value tells us the quality of our model. Summary of the regression can be used to interpret the factors that have a significant influence on the approval of a credit card application.
+
+To effectively evaluate the regression model trained, the dataset needs to be partitioned as train and test data. 75% of the dataset is used for training and the rest is used to predict the credit card application approval. The confusion matrix tells us how accurate the prediction is.
+
+
+
+```{r,echo=FALSE}
+set.seed(42)
+TrainingIndex <- createDataPartition(y=creditCard_df$Approved, p=0.75, list=FALSE)
+training <- creditCard_df[TrainingIndex,]
+testing <- creditCard_df[-TrainingIndex,]
+
+```
+
+
+```{r,echo=FALSE}
+cred_Lg<- glm(formula =  Approved ~ Age + Debt + YearsEmployed + 
+    CreditScore + Income, family = binomial, data = training)
+
+
+summary(cred_Lg)
+```
+
+
+
+
+We develop a multiple regression equation using _Age_, _Debt_, _YearsEmployed_, _CreditScore_, and _Income_ to predict credit card approval and check how well the regression model explains the variability in credit card approval.
+
+
+ $Log odds of Approval =  0.0046683Age + 0.0096415 Debt+0.2132374YearsEmployed+0.3730668CreditScore+ 0.0005563Income - 1.6310224$
+
+From the summary of the regression model, we can see that _YearsEmployed_, _CreditScore_, and _Income_ has a high significance in predicting the credit card application approval or denial. These factors are significant at $\alpha$ 0.001. Other features like _Age_ and _Debt_ does not seem to have much significance in predicting the approval of credit card applications.
+
+Furthermore, deviance in the summary is a measure of goodness of fit of the regression model. The null deviance of this model is 700.76 on 507 degrees of freedom. Null deviance includes just the intercept of the model and shows how well the model is predicted, whereas residual deviance includes predictors. For this model, residual deviance is 500.26 on 502 degrees of freedom, which is far less than the null deviance. So we could say that the goodness of fit is higher when we include the predictors in the regression model. 
+
+
+
+                FALSE         TRUE
+-----------   ------------  --------       
+      0            84           21
+      1            14           50         
+      
+
+
+
+
+The confusion matrix above gives the actual values and predicted values. 84 is the number of credit card applications correctly predicted as denied out of 98 (85.71% accuracy) and 50 is the number of applications correctly predicted as granted out of 71 (71.42% accuracy). Rest are Type 1 and Type 2 errors in the prediction. Approximately, the model is 79% accurate in predicting credit card approval.
+
+
+From this model, we found that only three factors have a significant influence on predicting approval rate. So in the next step, we will perform another regression model by removing the least significant features such as Age and Debt from the model and analyze the difference in **AIC** and other factors.
+
+
+
+```{r, echo=FALSE}
+
+set.seed(42)
+cred_Lg1<- glm(formula =  Approved ~ YearsEmployed + 
+    CreditScore + Income, family = binomial, data = training)
+
+
+summary(cred_Lg1)
+
+```
+
+Above is the simplified model by removing Age and Debt from our previous model. It can be seen that from the summary of regression the AIC has reduced to 508.67, which was earlier 512.26. The AIC shows the quality of a model, the lower the AIC better the model is. So from this, we can say that the simplified model is much better than the first model. Moreover, there is not much change in the deviance when compared to the previous complex model.
+
+                FALSE         TRUE
+-----------   ------------  --------       
+      0            84           21
+      1            14           50   
+      
+    
+The confusion matrix above also shows there is no change in the prediction of credit card approval after simplifying the model. This shows that the predictability of the model stays still 79% even after removing less influencing factors such as _Age_ and _Debt_.
+
+
+# Conclusion
+
+
+From the analysis, we found out that the variables that have a major impact on the variances in credit card approval are _Income_, _YearsEmployed_, and _CreditScore._ The AIC of the model is low, with 508.67. This model is significant at $\alpha$ = 0.001 or 99.9% level.
+
+
+
+\newpage
+
+# Appendix 1: The Problem
+
+**Logistic Regression analysis and prediction of credit card approvals** 
+
+Companies have to go through a series of processes to approve a credit card to a person. This process is tedious and mundane. Every time an application is submitted bank has to analyze certain factors that play a vital role in the approval of the credit card, such as the income of the applicant, credit score, employment status, etc. This can be automated using Logistic regression analysis which can be used to understand the factors which have the most effect on the decision-making process of credit card approval. In order to achieve this, a logistic regression model can be trained to predict the probability of credit card approval based on the features from the data set. afterward, the trained logistic regression model can be analyzed to get insights into different features that have the highest impact on the approval rate.
+
+
+
+## Managerial Report
+
+1. The datset contains meaningless variable names in order to protect the privacy of the individuals included in the study. These variable names need to be changed to meaningful names. The article cited in the Reference is used to interpret the meaning of each variables. Also, the outcome values of Approved column is in character symbols, these need to be changed to 1's and 0's in order to use regression.
+
+2. To understand the outcome values in each column, take the structure of the dataset. After finding out the continuous variables, visualize them using box plots to understand the relationship between these features and Approved factor in the dataset.
+
+
+3. Train a logistic regression model that can be used to predict credit card applications approval  given the _Age_, _Debt_, _YearsEmployed_, _CreditScore_, and _Income_. Test for individual significance and discuss your findings and conclusion.
+
+4. From the regression model above, if any variable does not have much significance remove those and predict card approval rate by using the rest of the variables. Based on the results of your analysis, which regression model would you recommend to predict credit card approval? Provide an interpretation of the summary of the logistic regression.
+
+
+\newpage
+
+
+
+# Appendix 2: Analysis
+
+Reading the data.
+
+
+
+```{r}
+
+creditcard_df <- read.csv("crx.csv")
+head(creditcard_df)
+
+```
+
+# Question 1:
+
+The datset contains meaningless variable names in order to protect the privacy. These variables names needs to be changed to meaningful names. The article cited in the Reference is used to interpret the meaning of each variables.
+
+
+Changing the variable names to meaningful names based on the article cited in the appendix.
+
+```{r}
+
+creditCard_df <- rename_(creditcard_df, "Male" = "b", "Age" ="X30.83", "Debt"= "X0", "Married"="u", "BankCustomer"= "g", "EducationLevel"= "w", "Ethnicity"= "v", "YearsEmployed"= "X1.25","PriorDefault"= "t", "Employed"= "t.1
+", "CreditScore"= "X01", "DriversLicense"= "f", "Citizen"= "g.1
+", "ZipCode"="X00202", "Income" = "X0.1", "Approved"= "X.")
+
+
+str(creditCard_df)
+```
+
+
+
+
+
+
+
+
+```{r}
+creditCard_df$Approved <- as.integer(factor(creditCard_df$Approved))-1
+creditCard_df$Age <- as.integer(creditCard_df$Age)
+head(creditCard_df)
+
+```
+There are only 12 NA's in the dataset. So just removing that.
+
+```{r}
+
+creditCard_df<-  na.omit(creditCard_df)
+which(is.na(creditCard_df$Age))
+
+```
+
+
+# Question2: 
+
+To understand the outcome values in each column, take the structure of the dataset. After finding out the continuous variables, visualize these with box plots to understand the relationship between these features and Approved factor in the dataset.
+
+
+```{r}
+
+summary(creditCard_df)
+      
+```
+
+
+```{r}
+
+
+boxplot(creditCard_df$Age[creditCard_df$Approved==0],
+        creditCard_df$Age[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Age and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Age"
+        )
+
+
+```
+
+
+
+
+
+```{r}
+
+boxplot(creditCard_df$Debt[creditCard_df$Approved==0],
+        creditCard_df$Debt[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Debt and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Debt"
+        )
+
+
+```
+
+
+
+
+
+
+```{r}
+
+boxplot(creditCard_df$Income[creditCard_df$Approved==0],
+        creditCard_df$Income[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between Income and Credit Card approval",
+        xlab = "Approval",
+        ylab = "Income"
+        )
+
+
+```
+
+
+
+
+
+
+```{r}
+
+boxplot(creditCard_df$CreditScore[creditCard_df$Approved==0],
+        creditCard_df$CreditScore[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between CreditScore and Credit Card approval",
+        xlab = "Approval",
+        ylab = "CreditScore"
+        )
+
+
+```
+
+
+```{r}
+
+boxplot(creditCard_df$YearsEmployed[creditCard_df$Approved==0],
+        creditCard_df$YearsEmployed[creditCard_df$Approved==1],
+        names= c(0,1),
+        main = "Relationship between YearsEmployed and Credit Card approval",
+        xlab = "Approval",
+        ylab = "YearsEmployed"
+        )
+
+
+```
+
+
+
+
+# Question 3:
+
+Develop a logistic regression model that can be used to predict credit card applications approval  given the _Age_, _Debt_, _YearsEmployed_, _CreditScore_, and _Income_. Test for individual significance and discuss your findings and conclusion.
+
+
+
+```{r}
+
+set.seed(42)
+TrainingIndex <- createDataPartition(y=creditCard_df$Approved, p=0.75, list=FALSE)
+training <- creditCard_df[TrainingIndex,]
+testing <- creditCard_df[-TrainingIndex,]
+
+```
+
+
+
+
+
+```{r}
+cred_Lg<- glm(formula =  Approved ~ Age + Debt + YearsEmployed + 
+    CreditScore + Income, family = binomial, data = training)
+
+
+summary(cred_Lg)
+```
+
+
+
+```{r}
+
+CredCardPredict <- predict(cred_Lg, newdata = testing, type="response")
+glm.pred <- ifelse(CredCardPredict > 0.5, 1, 0)
+
+confusionMatrix(as.factor(glm.pred), as.factor(testing$Approved))
+```
+
+
+# Question4:
+
+From the regression model above, if any variable does not have much significance remove those and predict card approval rate by using the rest of the variables. Based on the results of your analysis, which regression model would you recommend to predict credit card approval? Provide an interpretation of the summary of the logistic regression.
+
+
+
+```{r}
+set.seed(42)
+cred_Lg1<- glm(formula =  Approved ~ YearsEmployed + 
+    CreditScore + Income, family = binomial, data = training)
+
+
+summary(cred_Lg1)
+
+```
+
+
+```{r}
+CredCardPredict_new <- predict(cred_Lg1, newdata = testing, type="response")
+glm.predNew <- ifelse(CredCardPredict_new > 0.5, 1, 0)
+
+confusionMatrix(as.factor(glm.predNew), as.factor(testing$Approved))
+```
+
+
+\newpage
+
+
+# Appendix 3: Data Source and References
+
+
+Dataset is taken from the http://archive.ics.uci.edu/ml/datasets/credit+approval site. The data description of the dataset is taken from the article https://nycdatascience.com/blog/student-works/credit-card-approval-analysis/.
+
+
+
+## Reference
+
+http://archive.ics.uci.edu/ml/datasets/credit+approval    
+
+https://nycdatascience.com/blog/student-works/credit-card-approval-analysis/.
+
+
