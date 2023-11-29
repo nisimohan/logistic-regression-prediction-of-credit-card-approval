@@ -65,6 +65,8 @@ We develop a multiple regression equation using __Age, Debt, Years_Employed, Cre
 
 $$Log odds of Approval = 0.0591*Age + 0.1610*Debt + 0.6290*Years_Employed + 1.5468*Credit_Score + 1.6907*Income + 0.2812$$
 
+\[ \text{Log odds of Approval} = 0.0591 \times \text{Age} + 0.1610 \times \text{Debt} + 0.6290 \times \text{Years\_Employed} + 1.5468 \times \text{Credit\_Score} + 1.6907 \times \text{Income} + 0.2812 \]
+
 From the summary of the regression model, we can see that __YearsEmployed_, _CreditScore_, and _Income__ have a high significance in predicting credit card application approval or denial. These factors are significant with a __p-value__ of 0.000. Other features like __Age and Debt__ do not seem to have much significance in predicting the approval of credit card applications because the __p-value__ is much higher for these features.
 
 The Pseudo $R^2$ value of the model is __0.2753__ and the log-likelihood of the fitted model is __-270.96__, that means the deviance for the model is **−2×(−270.96)=2×270.96=541.92**. The log-likelihood of the null model which is __-373.90__, which means the deviance for the model is **−2×(−373.90)=2×373.90=747.80.** This suggests that  the goodness of fit is higher when we include the predictors in the regression model. 
