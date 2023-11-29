@@ -9,6 +9,9 @@
     - [Model2](#model2)
 - [Conclusion](#conclusion)
 - [Appendix](#appendix)
+  - [Dataset Exploration Details](#datsetdetails)
+  - [Data Source](#datasource)
+  - [References](#references)
 
 # Problem Statement
 
@@ -73,4 +76,43 @@ From this model, we found that only three factors have a significant influence o
 
 ### Model2
 
+![Confusion Matrix: 2](screenshots/confusion-matrix2.png)
+
+The confusion matrix above also shows there is no change in the prediction of credit card approval after simplifying the model. This shows that the predictability of the model stays still at 75.27% even after removing less influencing factors such as Age and Debt.
+
+![Model Summary: 2](screenshots/model2-summary.png)
+
+Above is the simplified model by removing Age and Debt from our previous model. It can be seen that from the summary of regression, the AIC has reduced to 552.36, which was earlier 553.91. The AIC shows the quality of a model, the lower the AIC better the model is. So from this, we can say that the simplified model is better than the first model even though the value in AIC is only slightly less. Moreover, there is not much change in the deviances when compared to the previous complex model.
+
+
+# Conclusion
+
+From the analysis, we found out that the variables that have a major impact on the variances in credit card approval are __Income, Years_Employed, and Credit_Score__. The AIC of the model is low, with 552.36. This model is significant at $\alpha$ = 0.001 or 99.9% level.
+
+# Appendix
+
+## Dataset Exploration Details
+
+1. The dataset contains meaningless variable names in order to protect the privacy of the individuals included in the study. These variable names need to be changed to meaningful names. The article cited in the Reference is used to interpret the meaning of each variable. Also, the outcome values of the Approved column are in character symbols, these need to be changed to 1's and 0's in order to use regression.
+
+2. To understand the outcome values in each column, take the structure of the dataset. After finding out the continuous variables, visualize them using box plots to understand the relationship between these features and the Approved factor in the dataset.
+
+
+3. Train a logistic regression model that can be used to predict credit card application approval  given the _Age_, _Debt_, _YearsEmployed_, _CreditScore_, and _Income_. Test for individual significance and discuss your findings and conclusion.
+
+4. From the regression model above, if any variable does not have much significance remove those and predict the card approval rate by using the rest of the variables. Based on the results of your analysis, which regression model would you recommend to predict credit card approval? Provide an interpretation of the summary of the logistic regression
+
+
+## Data Source 
+
+
+The dataset is taken from the http://archive.ics.uci.edu/ml/datasets/credit+approval site. The data description of the dataset is taken from the article https://nycdatascience.com/blog/student-works/credit-card-approval-analysis/.
+
+
+
+## References
+
+http://archive.ics.uci.edu/ml/datasets/credit+approval    
+
+https://nycdatascience.com/blog/student-works/credit-card-approval-analysis/.
 
