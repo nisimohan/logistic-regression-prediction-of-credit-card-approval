@@ -24,5 +24,22 @@ We start off by understanding the type of data in the data frame. We can see fro
 
 There are five continuous variables in the dataset. We will check the relationship between these variables and credit card approval before jumping to regression analysis. A box plot is used here to understand the correlation between **Age_, Income, Debt, CreditScore, Years_Employed, and the approval rate**. The below box plots of these continuous variables show that the means of the features of the approved applications are further distributed from the mean of the denied.
 
+**Relationship between Age and Credit Card approval**
+
 ![Box Plot: 1](screenshots/boxplot1.png)
 
+**Relationship between Debt and Credit Card approval**
+
+![Box Plot: 2](screenshots/boxplot2.png)
+
+**Relationship between Income and Credit Card approval**
+
+![Box Plot: 3](screenshots/boxplot3.png)
+
+**Relationship between CreditScore and Credit Card approval**
+
+![Box Plot: 4](screenshots/boxplot4.png)
+
+**Relationship between Years Employed and Credit Card approval**
+
+![Box Plot: 5](screenshots/boxplot5.png)
