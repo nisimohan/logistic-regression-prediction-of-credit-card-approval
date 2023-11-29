@@ -63,9 +63,7 @@ The confusion matrix above gives the actual values and predicted values. 75 is t
 
 We develop a multiple regression equation using __Age, Debt, Years_Employed, Credit_Score, and Income__ to predict credit card approval and check how well the regression model explains the variability in credit card approval.
 
-$$Log odds of Approval = 0.0591*Age + 0.1610*Debt + 0.6290*Years_Employed + 1.5468*Credit_Score + 1.6907*Income + 0.2812$$
-
-\[ \text{Log odds of Approval} = 0.0591 \times \text{Age} + 0.1610 \times \text{Debt} + 0.6290 \times \text{Years\_Employed} + 1.5468 \times \text{Credit\_Score} + 1.6907 \times \text{Income} + 0.2812 \]
+Log odds of Approval = 0.0591 * Age + 0.1610 * Debt + 0.6290 * Years_Employed + 1.5468 * Credit_Score + 1.6907 * Income + 0.2812
 
 From the summary of the regression model, we can see that __YearsEmployed_, _CreditScore_, and _Income__ have a high significance in predicting credit card application approval or denial. These factors are significant with a __p-value__ of 0.000. Other features like __Age and Debt__ do not seem to have much significance in predicting the approval of credit card applications because the __p-value__ is much higher for these features.
 
