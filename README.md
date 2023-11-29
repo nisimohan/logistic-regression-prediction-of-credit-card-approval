@@ -43,3 +43,34 @@ There are five continuous variables in the dataset. We will check the relationsh
 **Relationship between Years Employed and Credit Card approval**
 
 ![Box Plot: 5](screenshots/boxplot5.png)
+
+
+## Modeling
+
+The next step is to perform logistic regression on the five variables identified from the dataset. The Akaike Information Criterion(AIC) value tells us the quality of our model. A summary of the regression can be used to interpret the factors that have a significant influence on the approval of a credit card application.
+
+To effectively evaluate the regression model trained, the dataset needs to be partitioned as train and test data. 80% of the dataset is used for training and the rest is used to predict the credit card application approval. The confusion matrix tells us how accurate the prediction is.
+
+### Model1
+
+![Confusion Matrix: 1](screenshots/confusion-matrix1.png)
+
+
+The confusion matrix above gives the actual values and predicted values. 75 is the number of credit card applications correctly predicted as denied out of 93 (80.65% accuracy) and 38 is the number of applications correctly predicted as granted out of 43 (93.75% accuracy). The rest are Type 1 and Type 2 errors in the prediction. Approximately, the model is 75.28% accurate in predicting credit card approval.
+
+![Model Summary: 1](screenshots/model1-summary.png)
+
+
+We develop a multiple regression equation using __Age, Debt, Years_Employed, Credit_Score, and Income__ to predict credit card approval and check how well the regression model explains the variability in credit card approval.
+
+$ \text{Log odds of Approval} = 0.0591 \times \text{Age} + 0.1610 \times \text{Debt} + 0.6290 \times \text{Years_Employed} + 1.5468 \times \text{Credit_Score} + 1.6907 \times \text{Income} + 0.2812 $
+
+From the summary of the regression model, we can see that __YearsEmployed_, _CreditScore_, and _Income__ have a high significance in predicting credit card application approval or denial. These factors are significant with a __p-value__ of 0.000. Other features like __Age and Debt__ do not seem to have much significance in predicting the approval of credit card applications because the __p-value__ is much higher for these features.
+
+The Pseudo $R^2$ value of the model is __0.2753__ and the log-likelihood of the fitted model is __-270.96__, that means the deviance for the model is **−2×(−270.96)=2×270.96=541.92**. The log-likelihood of the null model which is __-373.90__, which means the deviance for the model is **−2×(−373.90)=2×373.90=747.80.** This suggests that  the goodness of fit is higher when we include the predictors in the regression model. 
+
+From this model, we found that only three factors have a significant influence on predicting approval rate. So in the next step, we will perform another regression model by removing the least significant features such as Age and Debt from the model and analyze the difference in diviance and other factors.
+
+### Model2
+
+
