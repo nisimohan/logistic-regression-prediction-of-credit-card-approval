@@ -48,7 +48,7 @@ We start off by understanding the type of data in the dataframe. We can see from
 
 ```{r,echo=FALSE}
 
-creditcard_df <- read.csv("crx.csv")
+creditcard_df <- read.csv("data/crx.csv")
 creditCard_df <- rename_(creditcard_df, "Male" = "b", "Age" ="X30.83", "Debt"= "X0", "Married"="u", "BankCustomer"= "g", "EducationLevel"= "w", "Ethnicity"= "v", "YearsEmployed"= "X1.25","PriorDefault"= "t", "Employed"= "t.1
 ", "CreditScore"= "X01", "DriversLicense"= "f", "Citizen"= "g.1
 ", "ZipCode"="X00202", "Income" = "X0.1", "Approved"= "X.")
